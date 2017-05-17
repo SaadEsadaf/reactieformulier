@@ -1,0 +1,55 @@
+{% extends "NewsCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+{% block sidebar %}
+    <h2>Author</h2>
+    <p>
+        <a href="{{ path('news_core_author_show', { slug: post.author.slug }) }}">{{ post.author.username }}</a>
+    </p>
+{% endblock %}
+{% block section %}
+    <h2>{{ post.title }}</h2>
+    <p>
+        Posted on
+        <time datetime="{{ post.createdAt | date('c') }}">{{ post.createdAt | date }}</time>
+    </p>
+    <hr>
+    <p>{{ post.body | nl2br }}</p>
+    <h2>
+        {% set count = post.comments | length %}
+        {% if count == 0 %}
+            No comments
+        {% elseif count == 1 %}
+            {{ count }} comment
+        {% else %}
+            {{ count }} comments
+        {% endif %}
+    </h2>
+    {{ include('messages.html.twig') }}
+    <div class="comments-list">
+        {% for comment in post.comments %}
+            <div class="media">
+                <p class="pull-right">
+                    <small>
+                        <time datetime="{{ comment.createdAt | date('c') }}">{{ comment.createdAt | date }}</time>
+                    </small>
+                </p>
+                <div class="media-body">
+                    <h4 class="media-heading user_name">{{ comment.authorName }}</h4>
+                    <p>{{ comment.body | nl2br }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <h2>Write your comment</h2>
+    {{ form_start(form, {'method': 'post', 'action': path('news_core_comment_createcomment', {slug: post.slug}) ~ '#comments', 'class': 'form-horizontal style-form'}) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.authorName, {'attr': {'class':'form-control'}}) }}
+    {{ form_row(form.body, {'attr': {'class':'form-control'}}) }}
+    <br>
+
+    <br>
+    {{ form_row(form.send, {'attr': {'class':'btn btn-primary'}}) }}
+    <br>
+    {{ form_end(form) }}
+{% endblock %}

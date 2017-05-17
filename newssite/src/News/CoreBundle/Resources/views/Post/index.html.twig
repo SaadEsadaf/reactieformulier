@@ -1,0 +1,57 @@
+{% extends "NewsCoreBundle::layout.html.twig" %}
+
+{% block title %}Home{% endblock %}
+{% block sidebar %}
+    <h2>Latest News</h2>
+    {% for post in latestPosts %}
+        <p>
+            <a href="{{ path('news_core_post_show', { slug: post.slug }) }}">
+                {{ post.title }}
+            </a>
+            [<em>
+                <time datetime="{{ post.createdAt | date('c') }}">{{ post.createdAt | date }}</time>
+            </em>]
+        </p>
+    {% endfor %}
+    <br>
+    <h2>Latest Comments</h2>
+    {% for comment in latestComments %}
+        <p>
+            <b>{{ comment.authorName }}</b> commented on
+            <a href="{{ path('news_core_post_show', { slug: comment.post.slug }) }}#comments">
+                {{ comment.post.title }}
+            </a>
+            [<em>
+                <time datetime="{{ comment.createdAt | date('c') }}">{{ comment.createdAt | date }}</time>
+            </em>]
+        </p>
+        <p>{{ comment.body | truncate(100) }}</p>
+    {% endfor %}
+{% endblock %}
+{% block section %}
+    {% for post in pagination %}
+        <h2><a href="{{ path('news_core_post_show', { slug: post.slug }) }}">{{ post.title }}</a></h2>
+        <p>
+            Posted on
+            <time datetime="{{ post.createdAt | date('c') }}">{{ post.createdAt | date }}</time>
+            by
+            <a href="{{ path('news_core_author_show', { slug: post.author.slug }) }}">{{ post.author.username }}</a>
+            -
+            <a href="{{ path('news_core_post_show', { slug: post.slug }) }}#comments">
+                {% set count = post.comments | length %}
+                {% if count == 0 %}
+                    No comments
+                {% elseif count == 1 %}
+                    {{ count }} comment
+                {% else %}
+                    {{ count }} comments
+                {% endif %}
+            </a>
+        </p>
+        <p>{{ post.body | truncate(400) }} &#8212; <a href="{{ path('news_core_post_show', { slug: post.slug }) }}">
+                Read more &raquo;</a></p>
+    {% endfor %}
+    <p class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </p>
+{% endblock %}

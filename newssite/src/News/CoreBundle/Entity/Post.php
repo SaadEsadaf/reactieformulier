@@ -1,0 +1,306 @@
+<?php
+
+namespace News\CoreBundle\Entity;
+
+use DateTime;
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * Post Entity.
+ *
+ * @ORM\Table(name="post")
+ * @ORM\Entity(repositoryClass="News\CoreBundle\Repository\PostRepository")
+ */
+class Post
+{
+    /**
+     * The id of the post.
+     *
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * The title of the post.
+     *
+     * @var string
+     *
+     * @ORM\Column(name="title", type="string", length=250)
+     * @Assert\NotBlank
+     */
+    private $title;
+
+    /**
+     * The slug of the post.
+     *
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"title"}, unique=false)
+     * @ORM\Column(length=255)
+     */
+    private $slug;
+
+    /**
+     * The content of the post.
+     *
+     * @var string
+     *
+     * @ORM\Column(name="body", type="text")
+     * @Assert\NotBlank
+     */
+    private $body;
+
+    /**
+     * The creation date of the post.
+     *
+     * @var DateTime
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    private $createdAt;
+
+    /**
+     * The modification date of the post.
+     *
+     * @var DateTime
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    /**
+     * The many-to-one association between Post and Author.
+     *
+     * @var Author
+     *
+     * @ORM\ManyToOne(targetEntity="Author", inversedBy="posts")
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id", nullable=false)
+     * @Assert\NotBlank
+     */
+    private $author;
+
+    /**
+     * The one-to-many association between Post and Comment.
+     *
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="post", cascade={"remove"})
+     */
+    private $comments;
+
+    /**
+     * Initializes comments.
+     */
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+    }
+
+    /**
+     * Is called when the class is treated like a string.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->title;
+    }
+    
+    /**
+     * Gets id.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Sets title.
+     *
+     * @param string $title
+     *
+     * @return Post
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Gets title.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Sets slug.
+     *
+     * @param string $slug
+     *
+     * @return Post
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Gets slug.
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * Sets body.
+     *
+     * @param string $body
+     *
+     * @return Post
+     */
+    public function setBody($body)
+    {
+        $this->body = $body;
+
+        return $this;
+    }
+
+    /**
+     * Gets body.
+     *
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * Sets createdAt.
+     *
+     * @param DateTime $createdAt
+     *
+     * @return Post
+     */
+    public function setCreatedAt(DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Gets createdAt.
+     *
+     * @return DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Sets updatedAt.
+     *
+     * @param DateTime $updatedAt
+     *
+     * @return Post
+     */
+    public function setUpdatedAt(DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Gets updatedAt.
+     *
+     * @return DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Sets author.
+     *
+     * @param Author $author
+     *
+     * @return Post
+     */
+    public function setAuthor(Author $author)
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * Gets author.
+     *
+     * @return Author
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
+     * Adds comment.
+     *
+     * @param Comment $comment
+     *
+     * @return Post
+     */
+    public function addComment(Comment $comment)
+    {
+        $this->comments[] = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Removes comment.
+     *
+     * @param Comment $comment
+     */
+    public function removeComment(Comment $comment)
+    {
+        $this->comments->removeElement($comment);
+    }
+
+    /**
+     * Gets comments.
+     *
+     * @return Collection
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+}

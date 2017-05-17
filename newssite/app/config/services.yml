@@ -1,0 +1,23 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+
+    twig.extension.text:
+        class: Twig_Extensions_Extension_Text
+        tags:
+            - { name: twig.extension }
+
+    # Admin Bundle - Sonata Project
+    news.core.admin.post:
+        class: News\CoreBundle\Admin\PostAdmin
+        arguments: [~, News\CoreBundle\Entity\Post, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Post }
+    news.core.admin.comment:
+        class: News\CoreBundle\Admin\CommentAdmin
+        arguments: [~, News\CoreBundle\Entity\Comment, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Comment }

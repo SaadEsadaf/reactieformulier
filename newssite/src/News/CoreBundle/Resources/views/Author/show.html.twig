@@ -1,0 +1,22 @@
+{% extends "NewsCoreBundle::layout.html.twig" %}
+
+{% block title %}Posts by {{ author.username }}{% endblock %}
+{% block sidebar %}
+    <h2>Posts by {{ author.username }}</h2>
+{% endblock %}
+{% block section %}
+    {% for post in pagination %}
+        <h2><a href="{{ path('news_core_post_show', { slug: post.slug }) }}">{{ post.title }}</a></h2>
+        <p>
+            Posted on
+            <time datetime="{{ post.createdAt | date('c') }}">{{ post.createdAt | date }}</time>
+            by
+            <a href="{{ path('news_core_author_show', { slug: post.author.slug }) }}">{{ post.author.username }}</a>
+        </p>
+        <p>{{ post.body | truncate(400) }} &#8212; <a href="{{ path('news_core_post_show', { slug: post.slug }) }}">
+                Read more &raquo;</a></p>
+    {% endfor %}
+    <p class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </p>
+{% endblock %}
